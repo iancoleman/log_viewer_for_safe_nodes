@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vault UI</title>
+        <link rel="stylesheet" href="Chart.css">
+        <link rel="stylesheet" href="app.css">
+    </head>
+    <body>
+        <div id="heading">
+            <h1 class="h1">Vault UI</h1>
+            <span class="duration">Load vault log files:</span>
+            <input id="files" type="file" multiple="multiple">
+        </div>
+        <div id="lines"></div>
+        <div id="chart" class="hidden">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <script id="line-template" type="text/template">
+<div class="line">
+    <div class="beforetime hidden">&nbsp;</div>
+    <div class="text"></div>
+</div>
+        </script>
+
+        <script src="jquery-3.4.1.min.js"></script>
+        <script src="Chart.bundle.js"></script>
+        <script src="vault_logs.js"></script>
+        <script src="app.js"></script>
+    </body>
+</html>

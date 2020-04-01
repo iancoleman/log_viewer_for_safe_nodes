@@ -1,0 +1,41 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    display: inline-block;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.duration {
+    padding: 0 20px;
+}
+
+#chart {
+    border: #DDD solid 1px;
+    width: 100%;
+}
+
+#lines {
+    overflow-y: scroll;
+}
+
+.line,
+.line .text {
+    width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.longtime {
+    padding: 20px 0;
+    visibility: visible;
+}
