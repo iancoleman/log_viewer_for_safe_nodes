@@ -54,9 +54,9 @@ DEBUG 2020-03-31T10:49:53.893634322+11:00 [/home/ian/.cargo/registry/src/github.
 DEBUG 2020-03-31T10:49:53.893640184+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/quic-p2p-0.4.0/src/connect.rs:246] Error connecting to peer 127.0.0.1:4003: ConnectionCancelled - Details: Connection cancelled
 DEBUG 2020-03-31T10:49:53.893648696+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/quic-p2p-0.4.0/src/connect.rs:246] Error connecting to peer 127.0.0.1:4008: ConnectionCancelled - Details: Connection cancelled
 DEBUG 2020-03-31T10:49:53.893655192+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/quic-p2p-0.4.0/src/connect.rs:246] Error connecting to peer 127.0.0.1:4009: ConnectionCancelled - Details: Connection cancelled
-Vault connection info:
+Node connection info:
 "127.0.0.1:5007"
-INFO 2020-03-31T10:49:53.893712193+11:00 [src/bin/safe_vault.rs:151] Vault connection info: "127.0.0.1:5007"
+INFO 2020-03-31T10:49:53.893712193+11:00 [src/bin/safe_vault.rs:151] Node connection info: "127.0.0.1:5007"
 DEBUG 2020-03-31T10:49:53.893736567+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/states/bootstrapping_peer.rs:122] BootstrappingPeer(8b28a8..) Sending BootstrapRequest to 127.0.0.1:5000.
 INFO 2020-03-31T10:49:53.898272318+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/states/bootstrapping_peer.rs:288] BootstrappingPeer(8b28a8..) - Joining a section EldersInfo(prefix: Prefix(), members: {P2pNode(07efa4.. at 127.0.0.1:5004), P2pNode(1c6aab.. at 127.0.0.1:5000), P2pNode(412889.. at 127.0.0.1:5001), P2pNode(656b14.. at 127.0.0.1:5003), P2pNode(71a8b3.. at 127.0.0.1:5006), P2pNode(d163a2.. at 127.0.0.1:5005), P2pNode(d91555.. at 127.0.0.1:5002)}, prev_hash_len: 1, version: 6) (given by P2pNode(1c6aab.. at 127.0.0.1:5000))
 INFO 2020-03-31T10:49:53.898367498+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/states/joining_peer.rs:135] JoiningPeer(8b28a8..) - Sending JoinRequest to 07efa4..

@@ -23,7 +23,7 @@ let colors = [
     "rgba(0, 0, 0, 0.3)",
 ];
 
-let vaultChartLines = [];
+let nodeChartLines = [];
 let allLogLines = [];
 
 $("#files").on("change", loadFiles);
@@ -36,6 +36,7 @@ function loadFiles() {
         (function(file) {
             let reader = new FileReader();
             reader.onload = function(e) {
+                console.log("Loading ", file.name);
                 parseLogFile(e.target.result);
             };
             reader.readAsText(file);
@@ -44,35 +45,39 @@ function loadFiles() {
 }
 
 function parseLogFile(content) {
-    // chart line for this vault
-    vaultIndex = vaultChartLines.length;
+    // chart line for this node
+    nodeIndex = nodeChartLines.length;
     lines = content.split("\n");
-    let vaultChartLine = {};
-    vaultChartLine.showLine = false;
-    vaultChartLine.order = 2;
-    vaultChartLine.data = [];
+    let nodeChartLine = {};
+    nodeChartLine.showLine = false;
+    nodeChartLine.order = 2;
+    nodeChartLine.data = [];
+
     // parse lines
     for (let lineIndex=0; lineIndex<lines.length; lineIndex++) {
         let line = lines[lineIndex];
-        let date = line.split(" ")[1];
+        let split = line.split(" ");
+        let date = line.split(" ")[2];
+
         let time = Math.floor(new Date(date).getTime() / 1000);
         if (isNaN(time)) {
             continue
         }
-        let displayedLineIndex = vaultChartLine.data.length;
+        let displayedLineIndex = nodeChartLine.data.length;
         let subseconds = date.split(".")[1].split(/[+-]/)[0];
         time = time + parseFloat("0." + subseconds);
+
         // chart point
-        vaultChartLine.data.push({
+        nodeChartLine.data.push({
             x: time,
-            // y is set after vaults are sorted
+            // y is set after nodes are sorted
             text: line,
             lineIndex: displayedLineIndex,
         });
     }
-    vaultChartLines.push(vaultChartLine);
-    if (vaultChartLines.length == $("#files")[0].files.length) {
-        sortVaultOrder();
+    nodeChartLines.push(nodeChartLine);
+    if (nodeChartLines.length == $("#files")[0].files.length) {
+        sortnodeOrder();
         createAllLogLines();
         sortAllLogLines();
         drawLines();
@@ -81,14 +86,14 @@ function parseLogFile(content) {
 }
 
 function createAllLogLines() {
-    for (let i=0; i<vaultChartLines.length; i++) {
-        for (let j=0; j<vaultChartLines[i].data.length; j++) {
-            let p = vaultChartLines[i].data[j];
+    for (let i=0; i<nodeChartLines.length; i++) {
+        for (let j=0; j<nodeChartLines[i].data.length; j++) {
+            let p = nodeChartLines[i].data[j];
             // create log line
             allLogLines.push({
                 time: p.x,
                 text: p.text,
-                vaultIndex: i,
+                nodeIndex: i,
                 lineIndex: p.lineIndex,
             });
             delete p.text;
@@ -97,16 +102,16 @@ function createAllLogLines() {
     }
 }
 
-function sortVaultOrder() {
-    vaultChartLines.sort(function(a,b) {
+function sortnodeOrder() {
+    nodeChartLines.sort(function(a,b) {
         return a.data[0].x - b.data[0].x;
     });
-    // update vault lines with their new index
-    for (let vaultIndex=0; vaultIndex<vaultChartLines.length; vaultIndex++) {
-        vaultChartLines[vaultIndex].pointBackgroundColor = colors[vaultIndex];
-        vaultChartLines[vaultIndex].pointBorderColor = colors[vaultIndex];
-        for (let j=0; j<vaultChartLines[vaultIndex].data.length; j++) {
-            vaultChartLines[vaultIndex].data[j].y = -1 * vaultIndex;
+    // update node lines with their new index
+    for (let nodeIndex=0; nodeIndex<nodeChartLines.length; nodeIndex++) {
+        nodeChartLines[nodeIndex].pointBackgroundColor = colors[nodeIndex];
+        nodeChartLines[nodeIndex].pointBorderColor = colors[nodeIndex];
+        for (let j=0; j<nodeChartLines[nodeIndex].data.length; j++) {
+            nodeChartLines[nodeIndex].data[j].y = -1 * nodeIndex;
         }
     }
 }
@@ -124,13 +129,13 @@ function drawLines() {
         let line = allLogLines[i];
         // Add metadata to the chart points so hovering will allow the aggregated log
         // to be scrolled to that line.
-        let vaultIndex = line.vaultIndex;
+        let nodeIndex = line.nodeIndex;
         let lineIndex = line.lineIndex;
-        vaultChartLines[vaultIndex].data[lineIndex].allLogLinesIndex = i;
+        nodeChartLines[nodeIndex].data[lineIndex].allLogLinesIndex = i;
         // Display line
         let el = $($("#line-template").html());
         el.find(".text").text(line.text);
-        el.css("background-color", colors[vaultIndex]);
+        el.css("background-color", colors[nodeIndex]);
         el.data("lineIndex", i);
         // calculate timings
         if (i > 0) {
@@ -165,7 +170,7 @@ function showLine(lineIndex) {
         $(".beforetime").eq(nextIndex).removeClass("hidden");
     }
     if (chart && chart.drawPositionLine) {
-        let point = vaultChartLines[line.vaultIndex].data[line.lineIndex];
+        let point = nodeChartLines[line.nodeIndex].data[line.lineIndex];
         chart.drawPositionLine(point.x);
     }
 }

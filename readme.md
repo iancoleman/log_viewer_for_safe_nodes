@@ -1,4 +1,4 @@
-# Log Viewer For SAFE Vaults
+# Log Viewer For SAFE Nodes
 
 A way to visually explore multiple log vaults for [safe_vault](https://github.com/maidsafe/safe_vault).
 

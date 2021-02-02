@@ -7,9 +7,9 @@ DEBUG 2020-03-31T10:47:33.867862970+11:00 [/home/ian/.cargo/registry/src/github.
 INFO 2020-03-31T10:47:33.870429085+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/parsec.rs:397] 1c6aab..: Init new Parsec, genesis = GenesisPfxInfo(Prefix(), gen_version: 0, latest_version: 0, parsec_version 0)
 DEBUG 2020-03-31T10:47:33.870693457+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/states/elder/mod.rs:166] Elder(1c6aab..()) - State changed to Node.
 INFO 2020-03-31T10:47:33.870747046+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/states/elder/mod.rs:167] Elder(1c6aab..()) - Started a new network as a seed node.
-Vault connection info:
+Node connection info:
 "127.0.0.1:5000"
-INFO 2020-03-31T10:47:33.873449527+11:00 [src/bin/safe_vault.rs:151] Vault connection info: "127.0.0.1:5000"
+INFO 2020-03-31T10:47:33.873449527+11:00 [src/bin/safe_vault.rs:151] Node connection info: "127.0.0.1:5000"
 DEBUG 2020-03-31T10:47:53.876962984+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/rustls-0.16.0/src/server/hs.rs:623] decided upon suite SupportedCipherSuite { suite: TLS13_CHACHA20_POLY1305_SHA256, kx: BulkOnly, bulk: CHACHA20_POLY1305, hash: SHA256, sign: Anonymous, enc_key_len: 32, fixed_iv_len: 12, explicit_nonce_len: 0, hkdf_algorithm: Algorithm(Algorithm(SHA256)) }
 DEBUG 2020-03-31T10:47:53.879738701+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/quic-p2p-0.4.0/src/connect.rs:34] Connecting to 127.0.0.1:5001
 DEBUG 2020-03-31T10:47:53.879811842+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/rustls-0.16.0/src/client/hs.rs:93] No cached session for DNSNameRef("maidsafe.net")
