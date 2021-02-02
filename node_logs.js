@@ -30,13 +30,14 @@ $("#files").on("change", loadFiles);
 
 function loadFiles() {
     $("#files").addClass("hidden");
+    let filesval = $("#files").val();
+
     let files = $("#files")[0].files;
     $(".duration").text("Loading " + files.length + " files...");
     for (let i=0; i<files.length; i++) {
         (function(file) {
             let reader = new FileReader();
             reader.onload = function(e) {
-                console.log("Loading ", file.name);
                 parseLogFile(e.target.result);
             };
             reader.readAsText(file);
@@ -45,6 +46,8 @@ function loadFiles() {
 }
 
 function parseLogFile(content) {
+
+    console.log("Parsing log files...");
     // chart line for this node
     nodeIndex = nodeChartLines.length;
     lines = content.split("\n");
@@ -53,11 +56,27 @@ function parseLogFile(content) {
     nodeChartLine.order = 2;
     nodeChartLine.data = [];
 
+    let nodeSocket = "";
+
     // parse lines
     for (let lineIndex=0; lineIndex<lines.length; lineIndex++) {
         let line = lines[lineIndex];
         let split = line.split(" ");
         let date = line.split(" ")[2];
+        let logLevel = split[1];
+      
+        if (line.includes("Node connection info:") ){
+            nodeSocket = split[split.length - 1 ].replaceAll('"', '');
+        }
+
+        let srcLine = split[3];
+
+        // remove first parts of text
+        split.shift();
+        split.shift();
+        split.shift();
+        split.shift();
+        let actual_text = split.join(" ");
 
         let time = Math.floor(new Date(date).getTime() / 1000);
         if (isNaN(time)) {
@@ -67,35 +86,112 @@ function parseLogFile(content) {
         let subseconds = date.split(".")[1].split(/[+-]/)[0];
         time = time + parseFloat("0." + subseconds);
 
+        let networkEventFilter = $("#filter-text").val();
+
+        let showLine = true;
+
+        if (!line.includes(networkEventFilter) ){
+            showLine = false;
+        }
+
+
         // chart point
         nodeChartLine.data.push({
             x: time,
             // y is set after nodes are sorted
-            text: line,
+            text: actual_text,
             lineIndex: displayedLineIndex,
+            showLine,
+            nodeSocket,
+            srcLine,
+            logLevel
+
         });
     }
+
+    
     nodeChartLines.push(nodeChartLine);
-    if (nodeChartLines.length == $("#files")[0].files.length) {
+
+
+    let isLastFile = nodeChartLines.length == $("#files")[0].files.length;
+    if (isLastFile) {
         sortnodeOrder();
         createAllLogLines();
         sortAllLogLines();
         drawLines();
         drawChart();
+        bindDisplayFilters();
     }
+    
 }
 
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+// this func sourced here: https://davidwalsh.name/javascript-debounce-function
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+function bindDisplayFilters () {
+    function reParseData () {
+        console.info("Reparse of data triggered.")
+        nodeChartLines = [];
+        allLogLines = [];
+        window.chart=null;
+    
+        $("#lines").empty();
+        $("#chart").empty();
+        $("#chart").append('<canvas id="canvas"></canvas>')
+        loadFiles()
+
+    };
+
+    $("#apply-filter").click(reParseData);
+    $("#filter-text").on('input',debounce( function(e) {
+        console.log("debounced filter");
+        reParseData()
+    }, 250));
+    $("#show-level").change(reParseData);
+    $("#show-time").change(reParseData);
+    $("#show-src-line").change(reParseData);
+    $("#show-node-socket").change(reParseData);
+    
+
+    
+}
 function createAllLogLines() {
     for (let i=0; i<nodeChartLines.length; i++) {
         for (let j=0; j<nodeChartLines[i].data.length; j++) {
             let p = nodeChartLines[i].data[j];
-            // create log line
-            allLogLines.push({
-                time: p.x,
-                text: p.text,
-                nodeIndex: i,
-                lineIndex: p.lineIndex,
-            });
+
+            if( p.showLine ){
+
+                // create log line
+                allLogLines.push({
+                    time: p.x,
+                    text: p.text,
+                    nodeIndex: i,
+                    lineIndex: p.lineIndex,
+                    logLevel: p.logLevel,
+                    srcLine: p.srcLine,
+                    nodeSocket: p.nodeSocket,
+                    
+                });
+
+            }
             delete p.text;
             delete p.lineIndex
         }
@@ -125,6 +221,16 @@ function sortAllLogLines() {
 let linesEl = $("#lines");
 function drawLines() {
 
+    let showLevel = $("#show-level").is(':checked');
+    let showTime = $("#show-time").is(':checked');
+    let showSrc = $("#show-src-line").is(':checked');
+    let showNode = $("#show-node-socket").is(':checked');
+
+    console.info("Showing log level", showLevel);
+    console.info("Showing time", showTime);
+    console.info("Showing src line", showSrc);
+    console.info("Showing node socket line", showNode);
+
     for (let i=0; i<allLogLines.length; i++) {
         let line = allLogLines[i];
         // Add metadata to the chart points so hovering will allow the aggregated log
@@ -134,7 +240,13 @@ function drawLines() {
         nodeChartLines[nodeIndex].data[lineIndex].allLogLinesIndex = i;
         // Display line
         let el = $($("#line-template").html());
-        el.find(".text").text(line.text);
+
+        let socket = showNode && line.nodeSocket.length > 0 ? `[${line.nodeSocket}]` : '';
+        let level = showLevel ? `[${line.logLevel}]` : '';
+        let time = showTime ? `${line.time} | ` : '';
+        let src = showSrc ? `[${line.srcLine}]` : '';
+        let fullLine = ` > ${socket}${level}${time}${src} ${line.text}`
+        el.find(".text").text(fullLine);
         el.css("background-color", colors[nodeIndex]);
         el.data("lineIndex", i);
         // calculate timings
