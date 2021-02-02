@@ -76,7 +76,7 @@ function parseLogFile(content) {
         split.shift();
         split.shift();
         split.shift();
-        let actual_text = split.join("");
+        let actual_text = split.join(" ");
 
         let time = Math.floor(new Date(date).getTime() / 1000);
         if (isNaN(time)) {
@@ -204,7 +204,7 @@ function drawLines() {
     console.info("Showing log level", showLevel);
     console.info("Showing time", showTime);
     console.info("Showing src line", showSrc);
-    console.info("Showing node socket line", showSshowNoderc);
+    console.info("Showing node socket line", showNode);
 
     for (let i=0; i<allLogLines.length; i++) {
         let line = allLogLines[i];
