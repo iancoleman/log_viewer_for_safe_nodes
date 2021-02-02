@@ -67,14 +67,23 @@ function parseLogFile(content) {
         let subseconds = date.split(".")[1].split(/[+-]/)[0];
         time = time + parseFloat("0." + subseconds);
 
+        // TODO: Define filterable events more robustly:
+        let networkEventFilter = "New event received from the Network";
+
+        let showLine = true;
+        if (!line.includes(networkEventFilter) ){
+            showLine = false;
+        }
         // chart point
         nodeChartLine.data.push({
             x: time,
             // y is set after nodes are sorted
             text: line,
             lineIndex: displayedLineIndex,
+            showLine
         });
     }
+
     nodeChartLines.push(nodeChartLine);
     if (nodeChartLines.length == $("#files")[0].files.length) {
         sortnodeOrder();
@@ -89,13 +98,17 @@ function createAllLogLines() {
     for (let i=0; i<nodeChartLines.length; i++) {
         for (let j=0; j<nodeChartLines[i].data.length; j++) {
             let p = nodeChartLines[i].data[j];
-            // create log line
-            allLogLines.push({
-                time: p.x,
-                text: p.text,
-                nodeIndex: i,
-                lineIndex: p.lineIndex,
-            });
+
+            if( p.showLine ){
+                // create log line
+                allLogLines.push({
+                    time: p.x,
+                    text: p.text,
+                    nodeIndex: i,
+                    lineIndex: p.lineIndex,
+                });
+
+            }
             delete p.text;
             delete p.lineIndex
         }
