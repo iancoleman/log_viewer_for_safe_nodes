@@ -207,7 +207,9 @@ window.drawChart = function() {
     // first dataset is vertical grey line, see showPosition
     chartConfig.data.datasets = [{}];
     for (let i=0; i<nodeChartLines.length; i++) {
+
         chartConfig.data.datasets.push(nodeChartLines[i]);
+
     }
 
     chartConfig.options = {};

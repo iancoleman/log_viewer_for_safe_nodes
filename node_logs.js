@@ -30,6 +30,10 @@ $("#files").on("change", loadFiles);
 
 function loadFiles() {
     $("#files").addClass("hidden");
+    let filesval = $("#files").val();
+
+    console.log(filesval[0]);
+
     let files = $("#files")[0].files;
     $(".duration").text("Loading " + files.length + " files...");
     for (let i=0; i<files.length; i++) {
@@ -53,6 +57,8 @@ function parseLogFile(content) {
     nodeChartLine.order = 2;
     nodeChartLine.data = [];
 
+    let nodePort = "";
+
     // parse lines
     for (let lineIndex=0; lineIndex<lines.length; lineIndex++) {
         let line = lines[lineIndex];
@@ -68,9 +74,11 @@ function parseLogFile(content) {
         time = time + parseFloat("0." + subseconds);
 
         // TODO: Define filterable events more robustly:
-        let networkEventFilter = "New event received from the Network";
+        let networkEventFilter = $("#filter-text").val();
 
         let showLine = true;
+        // if (!line.includes("networkEventFilter") ){
+        // }
         if (!line.includes(networkEventFilter) ){
             showLine = false;
         }
@@ -84,16 +92,35 @@ function parseLogFile(content) {
         });
     }
 
+    
     nodeChartLines.push(nodeChartLine);
-    if (nodeChartLines.length == $("#files")[0].files.length) {
+
+    let isLastFile = nodeChartLines.length == $("#files")[0].files.length;
+    if (isLastFile) {
+        console.log("creating charts")
         sortnodeOrder();
         createAllLogLines();
         sortAllLogLines();
         drawLines();
         drawChart();
+        bindFilterButton();
     }
+    
 }
 
+function bindFilterButton () {
+    $("#apply-filter").click(() => {
+        console.log("click");
+        nodeChartLines = [];
+        allLogLines = [];
+        window.chart=null;
+
+        $("#lines").empty();
+        $("#chart").empty();
+        $("#chart").append('<canvas id="canvas"></canvas>')
+        loadFiles()
+    })
+}
 function createAllLogLines() {
     for (let i=0; i<nodeChartLines.length; i++) {
         for (let j=0; j<nodeChartLines[i].data.length; j++) {
