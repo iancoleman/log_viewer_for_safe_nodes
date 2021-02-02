@@ -6,7 +6,7 @@ window.drawChart = function() {
 
     function setLayout() {
         let headingHeight = Math.ceil($("#heading").height());
-        let chartHeight = (vaultChartLines.length*15);
+        let chartHeight = (nodeChartLines.length*15);
         let linesHeight = window.innerHeight - headingHeight - chartHeight - 2;
         let w = (window.innerWidth - 2) + "px";
         $("#lines").css("height", linesHeight + "px");
@@ -94,7 +94,7 @@ window.drawChart = function() {
             },
             {
                 x: time,
-                y: -1 * (vaultChartLines.length - 1 + 0.5),
+                y: -1 * (nodeChartLines.length - 1 + 0.5),
             },
         ]
         chart.update();
@@ -206,8 +206,8 @@ window.drawChart = function() {
 
     // first dataset is vertical grey line, see showPosition
     chartConfig.data.datasets = [{}];
-    for (let i=0; i<vaultChartLines.length; i++) {
-        chartConfig.data.datasets.push(vaultChartLines[i]);
+    for (let i=0; i<nodeChartLines.length; i++) {
+        chartConfig.data.datasets.push(nodeChartLines[i]);
     }
 
     chartConfig.options = {};
@@ -249,7 +249,7 @@ window.drawChart = function() {
     chartConfig.options.scales.yAxes = [{
         display: false,
         ticks: {
-            min: -1 * (vaultChartLines.length - 1 + 0.5),
+            min: -1 * (nodeChartLines.length - 1 + 0.5),
             max: 0.5,
             // the following values are from
             // https://www.chartjs.org/docs/latest/general/performance.html

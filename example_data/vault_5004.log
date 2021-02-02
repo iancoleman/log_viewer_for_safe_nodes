@@ -54,9 +54,9 @@ DEBUG 2020-03-31T10:48:53.902118895+11:00 [/home/ian/.cargo/registry/src/github.
 DEBUG 2020-03-31T10:48:53.902200184+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/quic-p2p-0.4.0/src/connect.rs:246] Error connecting to peer 127.0.0.1:4007: ConnectionCancelled - Details: Connection cancelled
 DEBUG 2020-03-31T10:48:53.902232428+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/quic-p2p-0.4.0/src/connect.rs:246] Error connecting to peer 127.0.0.1:4004: ConnectionCancelled - Details: Connection cancelled
 DEBUG 2020-03-31T10:48:53.902260014+11:00 [/home/ian/.cargo/registry/src/github.com-1ecc6299db9ec823/quic-p2p-0.4.0/src/connect.rs:246] Error connecting to peer 127.0.0.1:4002: ConnectionCancelled - Details: Connection cancelled
-Vault connection info:
+Node connection info:
 "127.0.0.1:5004"
-INFO 2020-03-31T10:48:53.902952851+11:00 [src/bin/safe_vault.rs:151] Vault connection info: "127.0.0.1:5004"
+INFO 2020-03-31T10:48:53.902952851+11:00 [src/bin/safe_vault.rs:151] Node connection info: "127.0.0.1:5004"
 DEBUG 2020-03-31T10:48:53.903033149+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/states/bootstrapping_peer.rs:122] BootstrappingPeer(07efa4..) Sending BootstrapRequest to 127.0.0.1:5000.
 INFO 2020-03-31T10:48:53.914410359+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/states/bootstrapping_peer.rs:288] BootstrappingPeer(07efa4..) - Joining a section EldersInfo(prefix: Prefix(), members: {P2pNode(1c6aab.. at 127.0.0.1:5000), P2pNode(412889.. at 127.0.0.1:5001), P2pNode(656b14.. at 127.0.0.1:5003), P2pNode(d91555.. at 127.0.0.1:5002)}, prev_hash_len: 1, version: 3) (given by P2pNode(1c6aab.. at 127.0.0.1:5000))
 INFO 2020-03-31T10:48:53.914592196+11:00 [/home/ian/.cargo/git/checkouts/routing-616e72cf40f12bc0/76713d9/src/states/joining_peer.rs:135] JoiningPeer(07efa4..) - Sending JoinRequest to 1c6aab..
