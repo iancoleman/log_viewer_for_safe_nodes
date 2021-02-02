@@ -33,7 +33,6 @@ h1 {
 
 .line {
     padding-left: 1rem;
-    
 }
 .bold {
     font-weight: bold;
@@ -42,4 +41,9 @@ h1 {
 .longtime {
     padding: 20px 0;
     visibility: visible;
+}
+
+.filter {
+    display: inline-block;
+    padding-left: 2em;
 }
