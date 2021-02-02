@@ -101,6 +101,7 @@ function parseLogFile(content) {
             // y is set after nodes are sorted
             text: actual_text,
             lineIndex: displayedLineIndex,
+            date: date,
             showLine,
             nodeSocket,
             srcLine,
@@ -158,17 +159,16 @@ function bindDisplayFilters () {
 
     };
 
-    $("#apply-filter").click(reParseData);
     $("#filter-text").on('input',debounce( function(e) {
         console.log("debounced filter");
         reParseData()
     }, 250));
-    $("#show-level").change(reParseData);
-    $("#show-time").change(reParseData);
-    $("#show-src-line").change(reParseData);
-    $("#show-node-socket").change(reParseData);
-
+    $("#format-text").on('input',debounce( function(e) {
+        console.log("debounced format");
+        reParseData()
+    }, 250));
 }
+
 function createAllLogLines() {
     for (let i=0; i<nodeChartLines.length; i++) {
         for (let j=0; j<nodeChartLines[i].data.length; j++) {
@@ -185,6 +185,7 @@ function createAllLogLines() {
                     logLevel: p.logLevel,
                     srcLine: p.srcLine,
                     nodeSocket: p.nodeSocket,
+                    date: p.date,
 
                 });
 
@@ -218,16 +219,7 @@ function sortAllLogLines() {
 let linesEl = $("#lines");
 function drawLines() {
 
-    let showLevel = $("#show-level").is(':checked');
-    let showTime = $("#show-time").is(':checked');
-    let showSrc = $("#show-src-line").is(':checked');
-    let showNode = $("#show-node-socket").is(':checked');
-
-    console.info("Showing log level", showLevel);
-    console.info("Showing time", showTime);
-    console.info("Showing src line", showSrc);
-    console.info("Showing node socket line", showNode);
-
+    let lineTemplate = $("#format-text").val();
     for (let i=0; i<allLogLines.length; i++) {
         let line = allLogLines[i];
         // Add metadata to the chart points so hovering will allow the aggregated log
@@ -238,11 +230,12 @@ function drawLines() {
         // Display line
         let el = $($("#line-template").html());
 
-        let socket = showNode && line.nodeSocket.length > 0 ? `[${line.nodeSocket}]` : '';
-        let level = showLevel ? `[${line.logLevel}]` : '';
-        let time = showTime ? `${line.time} | ` : '';
-        let src = showSrc ? `[${line.srcLine}]` : '';
-        let fullLine = `${socket}${level}${time}${src} ${line.text}`
+        let socket = line.nodeSocket.length > 0 ? `[${line.nodeSocket}]` : '';
+        let level = `${line.logLevel}`;
+        let time = `${line.date}`;
+        let src = `${line.srcLine}`;
+        let text = `${line.text}`;
+        let fullLine = eval("`" + lineTemplate + "`"); // don't hurt yourself
         el.find(".text").text(fullLine);
         el.css("background-color", colors[nodeIndex]);
         el.data("lineIndex", i);

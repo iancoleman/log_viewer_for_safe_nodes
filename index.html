@@ -15,24 +15,9 @@
                 <input id="filter-text" type="text">
             </div>
             <div class="filter">
-                <input type="checkbox" id="show-level" name="show-level"
-                checked>
-                <label for="show-level">Show log level</label>
-            </div>
-            <div class="filter">
-                <input type="checkbox" id="show-time" name="show-time"
-                checked>
-                <label for="show-time">Show log timestamp</label>
-            </div>
-            <div class="filter">
-                <input type="checkbox" id="show-src-line" name="show-src-line"
-                checked>
-                <label for="show-src-line">Show log source line</label>
-            </div>
-            <div class="filter">
-                <input type="checkbox" id="show-node-socket" name="show-node-socket"
-                checked>
-                <label for="show-node-socket">Show node socket</label>
+                <label for="format-text">Line format</label>
+                <input id="format-text" type="text" value="[${level}] ${time} ${src} ${socket} ${text}">
+                <span>Available: ${level} ${socket} ${src} ${text} ${time}</span>
             </div>
         </div>
         <div id="lines"></div>

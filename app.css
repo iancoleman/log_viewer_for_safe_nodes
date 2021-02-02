@@ -55,3 +55,7 @@ h1 {
     display: inline-block;
     padding-left: 2em;
 }
+
+#format-text {
+    width: 265px;
+}
