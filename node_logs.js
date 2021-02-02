@@ -57,7 +57,7 @@ function parseLogFile(content) {
     nodeChartLine.order = 2;
     nodeChartLine.data = [];
 
-    let nodePort = "";
+    let nodeSocket = "";
 
     // parse lines
     for (let lineIndex=0; lineIndex<lines.length; lineIndex++) {
@@ -77,8 +77,10 @@ function parseLogFile(content) {
         let networkEventFilter = $("#filter-text").val();
 
         let showLine = true;
-        // if (!line.includes("networkEventFilter") ){
-        // }
+        if (line.includes("Node connection info:") ){
+            nodeSocket = split[split.length - 1 ];
+        }
+
         if (!line.includes(networkEventFilter) ){
             showLine = false;
         }
@@ -88,12 +90,15 @@ function parseLogFile(content) {
             // y is set after nodes are sorted
             text: line,
             lineIndex: displayedLineIndex,
-            showLine
+            showLine,
+            nodeSocket
         });
     }
 
     
     nodeChartLines.push(nodeChartLine);
+
+    console.log("Node Socket: ", nodeSocket);
 
     let isLastFile = nodeChartLines.length == $("#files")[0].files.length;
     if (isLastFile) {
