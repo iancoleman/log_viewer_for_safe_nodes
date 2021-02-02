@@ -26,21 +26,29 @@ h1 {
 
 .line,
 .line .text {
-    width: 100%;
+    width: 99%;
     overflow-wrap: break-word;
     word-wrap: break-word;
+    padding-top: 1em;
 }
 
 .line {
-    padding-left: 1rem;
+    padding-left: 5px;
+    position: relative;
 }
 .bold {
     font-weight: bold;
 }
 
+.beforetime {
+    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
 .longtime {
-    padding: 20px 0;
-    visibility: visible;
+    float: left;
+    padding-top: 5px;
 }
 
 .filter {

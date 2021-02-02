@@ -64,7 +64,7 @@ function parseLogFile(content) {
         let split = line.split(" ");
         let date = line.split(" ")[2];
         let logLevel = split[1];
-      
+
         if (line.includes("Node connection info:") ){
             nodeSocket = split[split.length - 1 ].replaceAll('"', '');
         }
@@ -109,7 +109,6 @@ function parseLogFile(content) {
         });
     }
 
-    
     nodeChartLines.push(nodeChartLine);
 
 
@@ -122,7 +121,7 @@ function parseLogFile(content) {
         drawChart();
         bindDisplayFilters();
     }
-    
+
 }
 
 // Returns a function, that, as long as it continues to be invoked, will not
@@ -131,18 +130,18 @@ function parseLogFile(content) {
 // leading edge, instead of the trailing.
 // this func sourced here: https://davidwalsh.name/javascript-debounce-function
 function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
 };
 
 function bindDisplayFilters () {
@@ -151,7 +150,7 @@ function bindDisplayFilters () {
         nodeChartLines = [];
         allLogLines = [];
         window.chart=null;
-    
+
         $("#lines").empty();
         $("#chart").empty();
         $("#chart").append('<canvas id="canvas"></canvas>')
@@ -168,9 +167,7 @@ function bindDisplayFilters () {
     $("#show-time").change(reParseData);
     $("#show-src-line").change(reParseData);
     $("#show-node-socket").change(reParseData);
-    
 
-    
 }
 function createAllLogLines() {
     for (let i=0; i<nodeChartLines.length; i++) {
@@ -188,7 +185,7 @@ function createAllLogLines() {
                     logLevel: p.logLevel,
                     srcLine: p.srcLine,
                     nodeSocket: p.nodeSocket,
-                    
+
                 });
 
             }
@@ -245,7 +242,7 @@ function drawLines() {
         let level = showLevel ? `[${line.logLevel}]` : '';
         let time = showTime ? `${line.time} | ` : '';
         let src = showSrc ? `[${line.srcLine}]` : '';
-        let fullLine = ` > ${socket}${level}${time}${src} ${line.text}`
+        let fullLine = `${socket}${level}${time}${src} ${line.text}`
         el.find(".text").text(fullLine);
         el.css("background-color", colors[nodeIndex]);
         el.data("lineIndex", i);
@@ -254,13 +251,17 @@ function drawLines() {
             let beforetime = line.time - allLogLines[i-1].time;
             el.find(".beforetime").html(beforetime.toFixed(6) + " seconds");
             if (beforetime > 1) {
-                el.find(".beforetime").addClass("longtime");
+                // add longtime indicator to the previous log line
+                let lt = document.createElement("div");
+                lt.textContent = beforetime + " seconds";
+                lt.classList.add("longtime");
+                linesEl.children().last().append(lt);
             }
         }
         // events
         el.on("mouseenter", function() {
             unselectAllLines();
-            showLine(el.data("lineIndex"))
+            showLine(el, el.data("lineIndex"))
         });
         el.on("mouseleave", function() {
             unselectAllLines();
@@ -269,18 +270,23 @@ function drawLines() {
     }
 }
 
-function showLine(lineIndex) {
-    let line = allLogLines[lineIndex];
-    let el = $(".line").eq(lineIndex);
-    // show text as bold
-    el.find(".text").addClass("bold");
+let beforeTimeEl = null;
+let nextTimeEl = null;
+
+function showLine(el, lineIndex) {
     // show time to prior log
-    el.find(".beforetime").removeClass("hidden");
+    beforeTimeEl = el.find(".beforetime");
+    beforeTimeEl.addClass("bold");
     // show time to next log
     let nextIndex = lineIndex + 1;
     if (nextIndex < allLogLines.length) {
-        $(".beforetime").eq(nextIndex).removeClass("hidden");
+        nextTimeEl = el.next().find(".beforetime");
+        nextTimeEl.addClass("bold");
+    } else {
+        nextTimeEl = null;
     }
+    // show line on chart
+    let line = allLogLines[lineIndex];
     if (chart && chart.drawPositionLine) {
         let point = nodeChartLines[line.nodeIndex].data[line.lineIndex];
         chart.drawPositionLine(point.x);
@@ -288,8 +294,12 @@ function showLine(lineIndex) {
 }
 
 function unselectAllLines() {
-    $(".text.bold").removeClass("bold");
-    $(".beforetime").addClass("hidden");
+    if (beforeTimeEl != null) {
+        beforeTimeEl.removeClass("bold");
+    }
+    if (nextTimeEl != null) {
+        nextTimeEl.removeClass("bold");
+    }
 }
 
 function scrollLogToTime(t) {
