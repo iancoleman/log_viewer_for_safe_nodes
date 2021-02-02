@@ -12,6 +12,26 @@
             <input id="files" type="file" multiple="multiple">
             <input id="filter-text" type="text">
             <button id="apply-filter">apply filter</button>
+            <div>
+                <input type="checkbox" id="show-level" name="show-level"
+                checked>
+                <label for="show-level">Show log level</label>
+            </div>
+            <div>
+                <input type="checkbox" id="show-time" name="show-time"
+                checked>
+                <label for="show-time">Show log timestamp</label>
+            </div>
+            <div>
+                <input type="checkbox" id="show-src-line" name="show-src-line"
+                checked>
+                <label for="show-src-line">Show log source line</label>
+            </div>
+            <div>
+                <input type="checkbox" id="show-node-socket" name="show-node-socket"
+                checked>
+                <label for="show-node-socket">Show node socket</label>
+            </div>
         </div>
         <div id="lines"></div>
         <div id="chart" class="hidden">
