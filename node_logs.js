@@ -270,7 +270,9 @@ function showLine(lineIndex) {
 
 function scrollLogToTime(t) {
     // find index for this time
-    // TODO change this to binary search
+    // could change this to binary search
+    // but this way takes 100ms for 120K log lines
+    // so is fine for now
     let lineIndex = 1;
     for (lineIndex; lineIndex < allLogLines.length; lineIndex++) {
         let thisTime = allLogLines[lineIndex].time;

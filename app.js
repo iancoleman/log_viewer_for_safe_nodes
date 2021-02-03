@@ -8,14 +8,18 @@ window.drawChart = function() {
         let headingHeight = Math.ceil($("#heading").height());
         let chartHeight = (nodeChartLines.length*15);
         let linesHeight = window.innerHeight - headingHeight - chartHeight - 2;
-        let w = (window.innerWidth - 2) + "px";
-        $("#lines").css("height", linesHeight + "px");
+        let w = (window.innerWidth - 20) + "px";
+        let timelineTop = (window.innerHeight - chartHeight) + "px";
+        //$("#lines").css("height", linesHeight + "px");
         $("#canvas").css("height", chartHeight + "px");
         $("#chart").css("height", chartHeight + "px");
         $("#lines").css("width", w);
+        $("#lines").css("margin-top", headingHeight);
+        $("#lines").css("margin-bottom", chartHeight);
         $("#canvas").css("width", w);
         $("#chart").css("width", w);
         $("#chart").removeClass("hidden");
+        $("#timeline").css("height", chartHeight);
     }
 
     function showDuration() {
@@ -82,22 +86,17 @@ window.drawChart = function() {
     }
 
     function drawPositionLine(time) {
-        chart.data.datasets[0].borderColor = "#777";
-        chart.data.datasets[0].pointRadius = 0;
-        chart.data.datasets[0].borderWidth = 1;
-        chart.data.datasets[0].order = 1;
-        chart.data.datasets[0].type = "line";
-        chart.data.datasets[0].data = [
-            {
-                x: time,
-                y: 0.5,
-            },
-            {
-                x: time,
-                y: -1 * (nodeChartLines.length - 1 + 0.5),
-            },
-        ]
-        chart.update();
+        let scale = chart.scales[axis];
+        let min = scale.ticks.min;
+        if (!min) {
+            min = scale.min;
+        }
+        let max = scale.ticks.max;
+        if (!max) {
+            max = scale.max;
+        }
+        let ratio = (time-min) / (max-min);
+        $("#timeline").css("left", (ratio*100) + "%");
     }
 
     let panTimeout = null;
@@ -106,7 +105,7 @@ window.drawChart = function() {
     function handleMousedown(e) {
         // show this time in log lines
         if (e.which == 1) {
-            let ratio = e.offsetX / e.target.width
+            let ratio = currentTimelineRatio();
             let scale = chart.scales[axis];
             let min = scale.ticks.min;
             if (!min) {
@@ -168,8 +167,15 @@ window.drawChart = function() {
         chart.update();
     }
 
+    function currentTimelineRatio() {
+        let cursorLeft = parseInt($("#timeline").css("left"));
+        let chartWidth = $("#chart").width();
+        return cursorLeft / chartWidth;
+    }
+
     function doZoom(e) {
-        let ratio = e.offsetX / e.target.width
+        e.preventDefault();
+        let ratio = currentTimelineRatio();
         let scale = chart.scales[axis];
         let min = scale.ticks.min;
         if (!min) {
@@ -293,6 +299,11 @@ window.drawChart = function() {
     $("#chart").on("mousedown", handleMousedown);
     $("#chart").on("mousemove", doPan);
     $("#chart").on("mouseup", stopPanning);
+    $("#timeline").on("mousewheel", doZoom);
+    $("#timeline").on("mousemove", showPosition);
+    $("#timeline").on("mousedown", handleMousedown);
+    $("#timeline").on("mousemove", doPan);
+    $("#timeline").on("mouseup", stopPanning);
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
     window.chart = new Chart(ctx, chartConfig);

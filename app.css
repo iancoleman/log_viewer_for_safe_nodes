@@ -15,18 +15,25 @@ h1 {
     padding: 0 20px;
 }
 
+#heading {
+    position: fixed;
+    top: 0;
+    background-color: #FFF;
+    z-index: 2;
+    width: 100%;
+}
 #chart {
     border: #DDD solid 1px;
     width: 100%;
-}
-
-#lines {
-    overflow-y: scroll;
+    position: fixed;
+    bottom: 0;
+    z-index: 2;
+    background-color: #FFF;
 }
 
 .line,
 .line .text {
-    width: 99%;
+    width: 100%;
     overflow-wrap: break-word;
     word-wrap: break-word;
     padding-top: 1em;
@@ -63,4 +70,13 @@ h1 {
 
 #format-text {
     width: 265px;
+}
+#timeline {
+    width: 0;
+    position: fixed;
+    bottom: 0;
+    z-index: 3;
+    border-left: 1px solid #AAA;
+    margin: 0;
+    padding: 0;
 }
