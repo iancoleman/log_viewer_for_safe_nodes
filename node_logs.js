@@ -58,6 +58,18 @@ function parseLogFile(content) {
 
     let nodeSocket = "";
 
+    let filterText = $("#filter-text").val();
+    let networkEventFilter = new RegExp(".*");
+    if (filterText != "") {
+        try {
+            networkEventFilter = new RegExp(filterText);
+        }
+        catch(e) {
+            $("#lines").text(e);
+            return;
+        }
+    }
+
     // parse lines
     for (let lineIndex=0; lineIndex<lines.length; lineIndex++) {
         let line = lines[lineIndex];
@@ -86,11 +98,10 @@ function parseLogFile(content) {
         let subseconds = date.split(".")[1].split(/[+-]/)[0];
         time = time + parseFloat("0." + subseconds);
 
-        let networkEventFilter = $("#filter-text").val();
 
         let showLine = true;
 
-        if (!line.includes(networkEventFilter) ){
+        if (filterText != "" && !line.match(networkEventFilter)){
             showLine = false;
         }
 
