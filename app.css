@@ -33,8 +33,13 @@ h1 {
 }
 
 .line {
-    padding-left: 5px;
     position: relative;
+}
+.line .text {
+    padding-left: 5px;
+}
+.line .text:hover {
+    background-color: #FFF !important;
 }
 .bold {
     font-weight: bold;

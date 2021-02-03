@@ -275,7 +275,6 @@ window.drawChart = function() {
     }
 
     function showLogLine(evt, cht) {
-        unselectAllLines();
         if (cht.length == 0) {
             return;
         }

@@ -253,45 +253,18 @@ function drawLines() {
         }
         // events
         el.on("mouseenter", function() {
-            unselectAllLines();
-            showLine(el, el.data("lineIndex"))
-        });
-        el.on("mouseleave", function() {
-            unselectAllLines();
+            showLine(el.data("lineIndex"))
         });
         linesEl.append(el);
     }
 }
 
-let beforeTimeEl = null;
-let nextTimeEl = null;
-
-function showLine(el, lineIndex) {
-    // show time to prior log
-    beforeTimeEl = el.find(".beforetime");
-    beforeTimeEl.addClass("bold");
-    // show time to next log
-    let nextIndex = lineIndex + 1;
-    if (nextIndex < allLogLines.length) {
-        nextTimeEl = el.next().find(".beforetime");
-        nextTimeEl.addClass("bold");
-    } else {
-        nextTimeEl = null;
-    }
+function showLine(lineIndex) {
     // show line on chart
     let line = allLogLines[lineIndex];
     if (chart && chart.drawPositionLine) {
         let point = nodeChartLines[line.nodeIndex].data[line.lineIndex];
         chart.drawPositionLine(point.x);
-    }
-}
-
-function unselectAllLines() {
-    if (beforeTimeEl != null) {
-        beforeTimeEl.removeClass("bold");
-    }
-    if (nextTimeEl != null) {
-        nextTimeEl.removeClass("bold");
     }
 }
 
