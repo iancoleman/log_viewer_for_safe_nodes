@@ -149,6 +149,16 @@ window.drawChart = function() {
         chart.update();
     }
 
+    function enableZoom() {
+        $("#chart").on("mousewheel", doZoom);
+        $("#timeline").on("mousewheel", doZoom);
+    }
+
+    function disableZoom() {
+        $("#chart").off("mousewheel", doZoom);
+        $("#timeline").off("mousewheel", doZoom);
+    }
+
     function doZoom(e) {
         e.preventDefault();
         let cursorLeft = e.offsetX;
@@ -286,12 +296,14 @@ window.drawChart = function() {
     }
 
     if (!chartHasEvents) {
-        $("#chart").on("mousewheel", doZoom);
+        $("#chart").on("mouseenter", enableZoom);
+        $("#chart").on("mouseleave", disableZoom);
         $("#chart").on("mousemove", showPosition);
         $("#chart").on("mousedown", handleMousedown);
         $("#chart").on("mousemove", doPan);
         $("#chart").on("mouseup", stopPanning);
-        $("#timeline").on("mousewheel", doZoom);
+        $("#timeline").on("mouseenter", enableZoom);
+        $("#timeline").on("mouseleave", disableZoom);
         $("#timeline").on("mousemove", showPosition);
         $("#timeline").on("mousedown", handleMousedown);
         $("#timeline").on("mousemove", doPan);
