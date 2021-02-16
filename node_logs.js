@@ -179,7 +179,11 @@ function debounce(func, wait, immediate) {
     };
 };
 
+let hasBoundFilters = false;
 function bindDisplayFilters () {
+    if (hasBoundFilters) {
+        return;
+    }
     function reParseData () {
         console.info("Reparse of data triggered.")
         nodeChartLines = [];
@@ -189,6 +193,7 @@ function bindDisplayFilters () {
         $("#lines").empty();
         $("#chart").empty();
         $("#chart").append('<canvas id="canvas"></canvas>')
+        window.chart = null;
         loadFiles()
 
     };
@@ -201,6 +206,7 @@ function bindDisplayFilters () {
         console.log("debounced format");
         reParseData()
     }, 250));
+    hasBoundFilters = true;
 }
 
 function createAllLogLines() {
@@ -225,7 +231,6 @@ function createAllLogLines() {
 
             }
             delete p.text;
-            delete p.lineIndex
         }
     }
 }

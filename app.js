@@ -1,3 +1,5 @@
+window.chartHasEvents = false;
+
 window.drawChart = function() {
 
     let axis = "x-axis-1";
@@ -213,6 +215,9 @@ window.drawChart = function() {
     let xmin = nodeChartLines[0].firstTime - 1;
     let xmax = nodeChartLines[0].data[nodeChartLines[0].data.length-1].x + 1;
     for (let i=1; i<nodeChartLines.length; i++) {
+        if (nodeChartLines[i].data.length == 0) {
+            continue;
+        }
         let t = nodeChartLines[i].data[nodeChartLines[i].data.length-1].x + 1;
         if (t > xmax) {
             xmax = t;
@@ -273,17 +278,20 @@ window.drawChart = function() {
         showVertLineOnChart(point.allLogLinesIndex);
     }
 
+    if (!chartHasEvents) {
+        $("#chart").on("mousewheel", doZoom);
+        $("#chart").on("mousemove", showPosition);
+        $("#chart").on("mousedown", handleMousedown);
+        $("#chart").on("mousemove", doPan);
+        $("#chart").on("mouseup", stopPanning);
+        $("#timeline").on("mousewheel", doZoom);
+        $("#timeline").on("mousemove", showPosition);
+        $("#timeline").on("mousedown", handleMousedown);
+        $("#timeline").on("mousemove", doPan);
+        $("#timeline").on("mouseup", stopPanning);
+        chartHasEvents = true;
+    }
 
-    $("#chart").on("mousewheel", doZoom);
-    $("#chart").on("mousemove", showPosition);
-    $("#chart").on("mousedown", handleMousedown);
-    $("#chart").on("mousemove", doPan);
-    $("#chart").on("mouseup", stopPanning);
-    $("#timeline").on("mousewheel", doZoom);
-    $("#timeline").on("mousemove", showPosition);
-    $("#timeline").on("mousedown", handleMousedown);
-    $("#timeline").on("mousemove", doPan);
-    $("#timeline").on("mouseup", stopPanning);
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
     window.chart = new Chart(ctx, chartConfig);
