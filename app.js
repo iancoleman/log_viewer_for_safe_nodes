@@ -116,7 +116,25 @@ window.drawChart = function() {
         }
     }
 
-    function doPan(e) {
+    function doPanLeft() {
+        let pixelDiff = -1 * $("#chart").width() * 0.1;
+        updatePanPosition(pixelDiff);
+        updateTimelinePosition(pixelDiff);
+    }
+
+    function doPanRight() {
+        let pixelDiff = $("#chart").width() * 0.1;
+        updatePanPosition(pixelDiff);
+        updateTimelinePosition(pixelDiff);
+    }
+
+    function updateTimelinePosition(pixelDiff) {
+        let l = $("#timeline").position().left;
+        let newl = l + pixelDiff;
+        $("#timeline").css("left", newl + "px");
+    }
+
+    function doScrollwheelPan(e) {
         if (!isPanning) {
             return;
         }
@@ -124,18 +142,18 @@ window.drawChart = function() {
             clearTimeout(panTimeout);
         }
         panTimeout = setTimeout(function() {
-            updatePanPosition(e);
+            let currentX = e.offsetX;
+            let pixelDiff = currentX - panStartX;
+            updatePanPosition(pixelDiff);
         }, mouseEventDebounce);
     }
 
-    function updatePanPosition(e) {
-        let currentX = e.offsetX;
-        let pixelDiff = currentX - panStartX;
+    function updatePanPosition(pixelDiff) {
         let scale = chart.scales[axis];
         let min = scale.options.min;
         let max = scale.options.max;
         let timeDiff = max - min;
-        let pixels = $("#chart").width;
+        let pixels = $("#chart").width();
         let timePerPixel = timeDiff / pixels;
         let timeAdjustment = pixelDiff * timePerPixel;
         let newMin = min - timeAdjustment;
@@ -150,20 +168,28 @@ window.drawChart = function() {
     }
 
     function enableZoom() {
-        $("#chart").on("mousewheel", doZoom);
-        $("#timeline").on("mousewheel", doZoom);
+        $("#chart").on("mousewheel", doScrollwheelZoom);
+        $("#timeline").on("mousewheel", doScrollwheelZoom);
     }
 
     function disableZoom() {
-        $("#chart").off("mousewheel", doZoom);
-        $("#timeline").off("mousewheel", doZoom);
+        $("#chart").off("mousewheel", doScrollwheelZoom);
+        $("#timeline").off("mousewheel", doScrollwheelZoom);
     }
 
-    function doZoom(e) {
+    function doScrollwheelZoom(e) {
         e.preventDefault();
-        let cursorLeft = e.offsetX;
+        let zoomIn = e.originalEvent.wheelDeltaY > 0;
+        doZoom(zoomIn);
+    }
+
+    function doZoom(zoomIn) {
+        let cursorLeft = $("#timeline").position().left;
         let chartWidth = $("#chart").width();
         let ratio = cursorLeft / chartWidth;
+        if (!ratio || isNaN(ratio)) {
+            ratio = 0.5;
+        }
         let scale = chart.scales[axis];
         let min = scale.options.min;
         let max = scale.options.max;
@@ -171,7 +197,6 @@ window.drawChart = function() {
         let scrollAmount = diff * 0.2;
         let newMin = min;
         let newMax = max;
-        let zoomIn = e.originalEvent.wheelDeltaY > 0;
         if (zoomIn) {
             newMin = min + scrollAmount * ratio;
             newMax = max - scrollAmount * (1-ratio);
@@ -295,19 +320,37 @@ window.drawChart = function() {
         showVertLineOnChart(point.allLogLinesIndex);
     }
 
+    function keyboardShortcut(e) {
+        console.log(e.charCode);
+        if (e.charCode == 61) { // equals
+            doZoom(true);
+        }
+        else if (e.charCode == 45) { // hyphen
+            doZoom(false);
+        }
+        else if (e.charCode == 91) { // open square bracket
+            doPanLeft();
+        }
+        else if (e.charCode == 93) { // close square bracket
+            doPanRight();
+        }
+    }
+
     if (!chartHasEvents) {
         $("#chart").on("mouseenter", enableZoom);
         $("#chart").on("mouseleave", disableZoom);
         $("#chart").on("mousemove", showPosition);
         $("#chart").on("mousedown", handleMousedown);
-        $("#chart").on("mousemove", doPan);
+        $("#chart").on("mousemove", doScrollwheelPan);
         $("#chart").on("mouseup", stopPanning);
         $("#timeline").on("mouseenter", enableZoom);
         $("#timeline").on("mouseleave", disableZoom);
         $("#timeline").on("mousemove", showPosition);
         $("#timeline").on("mousedown", handleMousedown);
-        $("#timeline").on("mousemove", doPan);
+        $("#timeline").on("mousemove", doScrollwheelPan);
         $("#timeline").on("mouseup", stopPanning);
+        // keyboard events
+        $("body").on("keypress", keyboardShortcut);
         chartHasEvents = true;
     }
 
