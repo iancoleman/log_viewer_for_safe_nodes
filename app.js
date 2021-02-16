@@ -24,14 +24,8 @@ window.drawChart = function() {
 
     function showDuration() {
         let scale = chart.scales[axis];
-        let min = scale.ticks.min;
-        if (!min) {
-            min = scale.min;
-        }
-        let max = scale.ticks.max;
-        if (!max) {
-            max = scale.max;
-        }
+        let min = scale.options.min;
+        let max = scale.options.max;
         let d = max - min;
         let prettyD = d;
         let u = "seconds";
@@ -70,16 +64,10 @@ window.drawChart = function() {
     }
 
     function calcPositionLine(e) {
-        let ratio = e.offsetX / e.target.width
+        let ratio = e.offsetX / $("#chart").width();
         let scale = chart.scales[axis];
-        let min = scale.ticks.min;
-        if (!min) {
-            min = scale.min;
-        }
-        let max = scale.ticks.max;
-        if (!max) {
-            max = scale.max;
-        }
+        let min = scale.options.min;
+        let max = scale.options.max;
         let diff = max - min;
         let time = min + diff * ratio;
         drawPositionLine(time);
@@ -87,34 +75,26 @@ window.drawChart = function() {
 
     function drawPositionLine(time) {
         let scale = chart.scales[axis];
-        let min = scale.ticks.min;
-        if (!min) {
-            min = scale.min;
-        }
-        let max = scale.ticks.max;
-        if (!max) {
-            max = scale.max;
-        }
+        let min = scale.options.min;
+        let max = scale.options.max;
         let ratio = (time-min) / (max-min);
-        $("#timeline").css("left", (ratio*100) + "%");
+        let pixels = Math.floor(ratio * $("#chart").width());
+        $("#timeline").css("left", pixels + "px");
     }
 
     let panTimeout = null;
     let isPanning = false;
     let panStartX = 0;
     function handleMousedown(e) {
+        e.preventDefault();
         // show this time in log lines
         if (e.which == 1) {
-            let ratio = currentTimelineRatio();
+            let cursorLeft = e.offsetX;
+            let chartWidth = $("#chart").width();
+            let ratio = cursorLeft / chartWidth;
             let scale = chart.scales[axis];
-            let min = scale.ticks.min;
-            if (!min) {
-                min = scale.min;
-            }
-            let max = scale.ticks.max;
-            if (!max) {
-                max = scale.max;
-            }
+            let min = scale.options.min;
+            let max = scale.options.max;
             let diff = max - min;
             let time = min + diff * ratio;
             scrollLogToTime(time);
@@ -148,43 +128,29 @@ window.drawChart = function() {
         let currentX = e.offsetX;
         let pixelDiff = currentX - panStartX;
         let scale = chart.scales[axis];
-        let min = scale.ticks.min;
-        if (!min) {
-            min = scale.min;
-        }
-        let max = scale.ticks.max;
-        if (!max) {
-            max = scale.max;
-        }
+        let min = scale.options.min;
+        let max = scale.options.max;
         let timeDiff = max - min;
-        let pixels = e.target.width;
+        let pixels = $("#chart").width;
         let timePerPixel = timeDiff / pixels;
         let timeAdjustment = pixelDiff * timePerPixel;
         let newMin = min - timeAdjustment;
         let newMax = max - timeAdjustment;
+        scale.options.min = newMin;
+        scale.options.max = newMax;
         scale.options.ticks.min = newMin;
         scale.options.ticks.max = newMax;
         chart.update();
     }
 
-    function currentTimelineRatio() {
-        let cursorLeft = parseInt($("#timeline").css("left"));
-        let chartWidth = $("#chart").width();
-        return cursorLeft / chartWidth;
-    }
-
     function doZoom(e) {
         e.preventDefault();
-        let ratio = currentTimelineRatio();
+        let cursorLeft = e.offsetX;
+        let chartWidth = $("#chart").width();
+        let ratio = cursorLeft / chartWidth;
         let scale = chart.scales[axis];
-        let min = scale.ticks.min;
-        if (!min) {
-            min = scale.min;
-        }
-        let max = scale.ticks.max;
-        if (!max) {
-            max = scale.max;
-        }
+        let min = scale.options.min;
+        let max = scale.options.max;
         let diff = max - min;
         let scrollAmount = diff * 0.2;
         let newMin = min;
@@ -198,6 +164,8 @@ window.drawChart = function() {
             newMin = min - scrollAmount * ratio;
             newMax = max + scrollAmount * (1-ratio);
         }
+        scale.options.min = newMin;
+        scale.options.max = newMax;
         scale.options.ticks.min = newMin;
         scale.options.ticks.max = newMax;
         chart.update();
@@ -242,15 +210,27 @@ window.drawChart = function() {
 
     chartConfig.options.scales = {};
 
+    let xmin = nodeChartLines[0].firstTime - 1;
+    let xmax = nodeChartLines[0].data[nodeChartLines[0].data.length-1].x + 1;
+    for (let i=1; i<nodeChartLines.length; i++) {
+        let t = nodeChartLines[i].data[nodeChartLines[i].data.length-1].x + 1;
+        if (t > xmax) {
+            xmax = t;
+        }
+    }
     chartConfig.options.scales.xAxes = [{
         type: "linear",
         display: false,
+        min: xmin,
+        max: xmax,
         ticks: {
             // the following values are from
             // https://www.chartjs.org/docs/latest/general/performance.html
             minRotation: 0,
             maxRotation: 0,
             sampleSize: 1,
+            min: xmin,
+            max: xmax,
         },
     }];
 
