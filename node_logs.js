@@ -127,31 +127,32 @@ function parseLogFile(content, fileIndex, totalFiles) {
         if (isNaN(time)) {
             continue
         }
+        if (!("firstTime" in nodeChartLine)) {
+            nodeChartLine["firstTime"] = time
+        }
         let displayedLineIndex = nodeChartLine.data.length;
         let subseconds = date.split(".")[1].split(/[+-]/)[0];
         time = time + parseFloat("0." + subseconds);
 
-
         let showLine = true;
-
         if (filterText != "" && !line.match(networkEventFilter)){
             showLine = false;
         }
 
-
         // chart point
-        nodeChartLine.data.push({
-            x: time,
-            // y is set after nodes are sorted
-            text: actual_text,
-            lineIndex: displayedLineIndex,
-            date: date,
-            showLine,
-            nodeSocket,
-            srcLine,
-            logLevel
-
-        });
+        if (showLine) {
+            nodeChartLine.data.push({
+                x: time,
+                // y is set after nodes are sorted
+                text: actual_text,
+                lineIndex: displayedLineIndex,
+                date: date,
+                showLine,
+                nodeSocket,
+                srcLine,
+                logLevel
+            });
+        }
     }
 
     nodeChartLines.push(nodeChartLine);
@@ -231,7 +232,7 @@ function createAllLogLines() {
 
 function sortnodeOrder() {
     nodeChartLines.sort(function(a,b) {
-        return a.data[0].x - b.data[0].x;
+        return a.firstTime - b.firstTime;
     });
     // update node lines with their new index
     for (let nodeIndex=0; nodeIndex<nodeChartLines.length; nodeIndex++) {
@@ -286,13 +287,13 @@ function drawLines() {
         }
         // events
         el.on("mouseenter", function() {
-            showLine(el.data("lineIndex"))
+            showVertLineOnChart(el.data("lineIndex"))
         });
         linesEl.append(el);
     }
 }
 
-function showLine(lineIndex) {
+function showVertLineOnChart(lineIndex) {
     // show line on chart
     let line = allLogLines[lineIndex];
     if (chart && chart.drawPositionLine) {

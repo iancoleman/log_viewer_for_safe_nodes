@@ -276,11 +276,11 @@ window.drawChart = function() {
             clearTimeout(onHoverTimeout);
         }
         onHoverTimeout = setTimeout(function() {
-            showLogLine(evt, cht);
+            handleChartHover(evt, cht);
         }, mouseEventDebounce);
     }
 
-    function showLogLine(evt, cht) {
+    function handleChartHover(evt, cht) {
         if (cht.length == 0) {
             return;
         }
@@ -290,7 +290,7 @@ window.drawChart = function() {
         }
         let j = cht[0]._index;
         let point = chartConfig.data.datasets[i].data[j];
-        showLine(point.allLogLinesIndex);
+        showVertLineOnChart(point.allLogLinesIndex);
     }
 
 
