@@ -34,20 +34,53 @@ function loadFiles() {
 
     let files = $("#files")[0].files;
     $(".duration").text("Loading " + files.length + " files...");
-    for (let i=0; i<files.length; i++) {
-        (function(file) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                parseLogFile(e.target.result);
-            };
-            reader.readAsText(file);
-        })(files[i]);
-    }
+    doAsyncParse(files, 0);
 }
 
-function parseLogFile(content) {
+function doAsyncParse(files, fileIndex) {
+    $(".duration").text("Parsing log file " + fileIndex + " of " + files.length + "...");
+    let reader = new FileReader();
+    reader.onload = function(e) {
+        parseLogFile(e.target.result, fileIndex, files.length);
+        if (fileIndex < files.length-1) {
+            setTimeout(function() {
+                doAsyncParse(files, fileIndex+1);
+            }, 50);
+        }
+        let isLastLog = fileIndex == files.length-1;
+        if (isLastLog) {
+            displayEverything();
+        }
+    };
+    reader.readAsText(files[fileIndex]);
+}
 
-    console.log("Parsing log files...");
+function displayEverything() {
+    $(".duration").text("Rendering display...");
+    setTimeout(function() {
+        $(".duration").text("Rendering display... sorting node order");
+        setTimeout(function() {
+            sortnodeOrder()
+            $(".duration").text("Rendering display... creating log line elements");
+            setTimeout(function() {
+                createAllLogLines();
+                $(".duration").text("Rendering display... sorting all log lines");
+                setTimeout(function() {
+                    sortAllLogLines();
+                    $(".duration").text("Rendering display... rendering visual elements");
+                    setTimeout(function() {
+                        drawLines();
+                        drawChart();
+                        bindDisplayFilters();
+                    }, 50);
+                }, 50);
+            }, 50);
+        }, 50);
+    }, 50);
+}
+
+function parseLogFile(content, fileIndex, totalFiles) {
+
     // chart line for this node
     nodeIndex = nodeChartLines.length;
     lines = content.split("\n");
@@ -122,17 +155,6 @@ function parseLogFile(content) {
     }
 
     nodeChartLines.push(nodeChartLine);
-
-
-    let isLastFile = nodeChartLines.length == $("#files")[0].files.length;
-    if (isLastFile) {
-        sortnodeOrder();
-        createAllLogLines();
-        sortAllLogLines();
-        drawLines();
-        drawChart();
-        bindDisplayFilters();
-    }
 
 }
 
