@@ -1,3 +1,5 @@
+window.currentXMin = null;
+window.currentXMax = null;
 window.chartHasEvents = false;
 
 window.drawChart = function() {
@@ -142,6 +144,8 @@ window.drawChart = function() {
         scale.options.max = newMax;
         scale.options.ticks.min = newMin;
         scale.options.ticks.max = newMax;
+        currentXMin = newMin;
+        currentXMax = newMax;
         chart.update();
     }
 
@@ -170,6 +174,8 @@ window.drawChart = function() {
         scale.options.max = newMax;
         scale.options.ticks.min = newMin;
         scale.options.ticks.max = newMax;
+        currentXMin = newMin;
+        currentXMax = newMax;
         chart.update();
         showDuration();
     }
@@ -212,7 +218,7 @@ window.drawChart = function() {
 
     chartConfig.options.scales = {};
 
-    let xmin = nodeChartLines[0].firstTime - 1;
+    let xmin = currentXMin || nodeChartLines[0].firstTime - 1;
     let xmax = nodeChartLines[0].data[nodeChartLines[0].data.length-1].x + 1;
     for (let i=1; i<nodeChartLines.length; i++) {
         if (nodeChartLines[i].data.length == 0) {
@@ -223,6 +229,7 @@ window.drawChart = function() {
             xmax = t;
         }
     }
+    xmax = currentXMax || xmax;
     chartConfig.options.scales.xAxes = [{
         type: "linear",
         display: false,
