@@ -25,6 +25,7 @@ h1 {
 #chart {
     border: #DDD solid 1px;
     width: 100%;
+    max-height: 20vh;
     position: fixed;
     bottom: 0;
     z-index: 2;
